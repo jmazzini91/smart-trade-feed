@@ -148,3 +148,4 @@ if opportunities:
 else:
     st.warning("No trade opportunities currently ranked. Please try again soon.")
 
+
