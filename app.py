@@ -112,16 +112,39 @@ def analyze_articles(articles):
 st.set_page_config(page_title="Live Trade Signal Feed", layout="wide")
 st.title("📈 Smart Trade Opportunity Feed")
 
+min_score = st.slider("Minimum Confidence Score to Display", 0, 100, 0)
+
 with st.spinner("Fetching live data and analyzing..."):
     articles = fetch_news()
     opportunities = analyze_articles(articles)
 
 if opportunities:
-    st.subheader("🚀 Top Trade Recommendations (Live)")
-    for opp in opportunities[:5]:
-        st.markdown(f"### [{opp['direction']}] {opp['asset']} — {opp['score']}% Confidence")
-        st.markdown(f"**News:** {opp['headline']}")
-        st.markdown(f"- Sentiment: `{opp['sentiment']}`\n- RSI: `{opp['rsi']}`\n- MACD: `{opp['macd']}`\n- Trend: `{opp['trend']}`")
-        st.markdown("---")
+    filtered = [opp for opp in opportunities if opp['score'] >= min_score]
+    buys = [opp for opp in filtered if opp['direction'] == "BUY"]
+    sells = [opp for opp in filtered if opp['direction'] == "SELL"]
+
+    if buys:
+        st.subheader("🟢 Buy Opportunities")
+        for opp in buys:
+            st.markdown(f"### [BUY] {opp['asset']} — {opp['score']}% Confidence")
+            st.markdown(f"**News:** {opp['headline']}")
+            st.markdown(f"- Sentiment: `{opp['sentiment']}`\n- RSI: `{opp['rsi']}`\n- MACD: `{opp['macd']}`\n- Trend: `{opp['trend']}`")
+            if opp['rsi'] < 20 or opp['rsi'] > 80:
+                st.markdown(f"🧨 **Extreme RSI: {opp['rsi']}**")
+            st.markdown("---")
+
+    if sells:
+        st.subheader("🔴 Sell Opportunities")
+        for opp in sells:
+            st.markdown(f"### [SELL] {opp['asset']} — {opp['score']}% Confidence")
+            st.markdown(f"**News:** {opp['headline']}")
+            st.markdown(f"- Sentiment: `{opp['sentiment']}`\n- RSI: `{opp['rsi']}`\n- MACD: `{opp['macd']}`\n- Trend: `{opp['trend']}`")
+            if opp['rsi'] < 20 or opp['rsi'] > 80:
+                st.markdown(f"🧨 **Extreme RSI: {opp['rsi']}**")
+            st.markdown("---")
+
+    if not buys and not sells:
+        st.info("No opportunities meet your current filter. Try adjusting the minimum confidence.")
 else:
-    st.warning("No high-confidence trade opportunities at this time. Please try again soon.")
+    st.warning("No trade opportunities currently ranked. Please try again soon.")
+
