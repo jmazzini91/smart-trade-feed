@@ -25,6 +25,13 @@ def fetch_news():
     url = f"https://newsapi.org/v2/everything?q=finance+OR+economy+OR+crypto+OR+stocks&from={datetime.now().date()}&sortBy=publishedAt&language=en&apiKey={NEWS_API_KEY}"
     response = requests.get(url)
     articles = response.json().get("articles", [])
+    st.subheader("📰 Raw News Feed (debug)")
+if articles:
+    for article in articles:
+        st.text(article['title'])
+else:
+    st.error("No news articles fetched. Check your NEWSAPI_KEY in Streamlit Secrets.")
+
     return articles[:10]
 
 def compute_rsi(series, period=14):
