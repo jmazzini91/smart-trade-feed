@@ -39,6 +39,7 @@ def compute_indicators(ticker):
     try:
         data = yf.download(ticker, period="5d", interval="1h")
         if data.empty:
+            print(f"No data for {ticker}")
             return None
 
         data['RSI'] = compute_rsi(data['Close'])
@@ -56,7 +57,8 @@ def compute_indicators(ticker):
             'macd': macd,
             'trend': round(trend, 2)
         }
-    except Exception:
+    except Exception as e:
+        print(f"Error fetching {ticker}: {e}")
         return None
 
 def analyze_articles(articles):
@@ -70,6 +72,9 @@ def analyze_articles(articles):
         for keyword in keyword_asset_map:
             if keyword in title.lower():
                 matched_assets.update(keyword_asset_map[keyword])
+
+        print(f"Article: {title}")
+        print(f"Matched Assets: {matched_assets}")
 
         for asset in matched_assets:
             indicators = compute_indicators(asset)
@@ -147,5 +152,3 @@ if opportunities:
         st.info("No opportunities meet your current filter. Try adjusting the minimum confidence.")
 else:
     st.warning("No trade opportunities currently ranked. Please try again soon.")
-
-
