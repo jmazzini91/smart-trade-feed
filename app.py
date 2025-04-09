@@ -17,4 +17,6 @@ keyword_asset_map = {
     "russia": ["CL=F", "NG=F", "GC=F"],
     "btc": ["BTC-USD"],
     "ethereum": ["ETH-USD"],
-    "nasdaq": ["^
+    "nasdaq": ["^IXIC"],
+    "interest rates": ["USDJPY=X", "EURUSD=X", "GC=F"]
+}
